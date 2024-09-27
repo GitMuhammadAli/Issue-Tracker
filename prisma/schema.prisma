@@ -12,3 +12,84 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @relation(fields: [roleId], references: [id])
+  roleId    Int
+  issues    Issue[]  @relation("AssignedIssues")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  teams     TeamMember[]
+  reportedIssues Issue[] @relation("ReportedIssues")
+  comments Comment[]
+}
+
+model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique // Roles like 'Admin', 'Developer', 'Project Manager'
+  users User[]
+}
+
+model Issue {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  priority    Priority
+  status      Status
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  assignee    User?    @relation("AssignedIssues", fields: [assigneeId], references: [id])
+  assigneeId  Int?
+  reporter    User     @relation("ReportedIssues", fields: [reporterId], references: [id])
+  reporterId  Int
+  team        Team?    @relation(fields: [teamId], references: [id])
+  teamId      Int?
+  comments    Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  issue     Issue    @relation(fields: [issueId], references: [id])
+  issueId   Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+}
+
+model Team {
+  id          Int          @id @default(autoincrement())
+  name        String
+  members     TeamMember[]
+  issues      Issue[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model TeamMember {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  team      Team     @relation(fields: [teamId], references: [id])
+  teamId    Int
+  role      String   // Roles in team, like 'Team Lead', 'Developer'
+  joinedAt  DateTime @default(now())
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum Status {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
