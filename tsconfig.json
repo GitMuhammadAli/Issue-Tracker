@@ -22,10 +22,12 @@
       "@/*": ["src/*"],
       "@components/*": ["src/app/components/*"],
       "@pages/*": ["src/pages/*"],
-      "@utils/*": ["lib/*"]
+      "@lib/*": ["lib/*"],
+      "@utils/*": ["src/utils/*"],
+      "@reducers/*": ["src/app/reducers/*"],
       
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/api/signup/route.ts"],
   "exclude": ["node_modules"]
 }
