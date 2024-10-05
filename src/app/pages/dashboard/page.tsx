@@ -1,20 +1,34 @@
 "use client"
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Bar, Pie } from 'react-chartjs-2'
-import { 
-  AlertCircle, 
-  CheckCircle, 
-  Clock, 
+import { useRouter } from 'next/navigation';
+import {
+  AlertCircle,
+  CheckCircle,
+  Clock,
   Flag,
   User,
-  Calendar
+  Calendar,
+  Router
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from "@components/ui/card"
 import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
+import { useAuth } from '@context/AutContext';
 
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 export default function Dashboard() {
+  const { isAuthenticated,  userData } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    
+    if (!isAuthenticated) {
+      router.push('/signin')
+    }
+  }, [isAuthenticated, router])
+
+
   const issuesByPriorityData = {
     labels: ['High', 'Medium', 'Low'],
     datasets: [{
@@ -38,7 +52,7 @@ export default function Dashboard() {
   return (
     <div className="p-6 bg-[#F9F7F7]">
       <h1 className="text-3xl font-bold text-[#112D4E] mb-6">Dashboard</h1>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
         <MetricCard title="Open Issues" value="42" icon={<AlertCircle className="h-8 w-8 text-yellow-500" />} />
         <MetricCard title="Resolved Issues" value="128" icon={<CheckCircle className="h-8 w-8 text-green-500" />} />
@@ -49,6 +63,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <Card>
           <CardHeader>
+            <CardTitle>Welcome user {userData?.firstName}</CardTitle>
             <CardTitle>Issues by Priority</CardTitle>
           </CardHeader>
           <CardContent>
@@ -102,10 +117,9 @@ export default function Dashboard() {
                     <Calendar className="h-5 w-5 mr-2 text-[#3F72AF]" />
                     {task.title}
                   </span>
-                  <span className={`font-semibold ${
-                    task.priority === 'High' ? 'text-red-500' :
-                    task.priority === 'Medium' ? 'text-yellow-500' : 'text-green-500'
-                  }`}>
+                  <span className={`font-semibold ${task.priority === 'High' ? 'text-red-500' :
+                      task.priority === 'Medium' ? 'text-yellow-500' : 'text-green-500'
+                    }`}>
                     {task.date}
                   </span>
                 </li>

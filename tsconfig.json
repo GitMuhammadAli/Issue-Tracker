@@ -25,6 +25,7 @@
       "@lib/*": ["lib/*"],
       "@utils/*": ["src/utils/*"],
       "@reducers/*": ["src/app/reducers/*"],
+      "@context/*":["src/context/*"]
       
     }
   },

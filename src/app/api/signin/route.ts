@@ -25,14 +25,13 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "Invalid password" }, { status: 401 });
     }
 
-    // const hashedId = createHash('sha256').update(user.id.toString()).digest('hex');
-    // const token = generateToken(hashedId);
+    // Generate token
     const token = generateToken(user.id);
 
-    // const response = NextResponse.json({ message: "Login successful", user: { ...user, id: hashedId } }, { status: 200 });
-    const response = NextResponse.json({ message: "Login successful", user: { ...user, id: user.id } }, { status: 200 });
+    // Send token in response body (as JSON)
+    const response = NextResponse.json({ message: "Login successful", token, user: { id: user.id, email: user.email } }, { status: 200 });
     
-    // sendCookie(token, response);
+    // Optional: Still set HttpOnly cookie for server-side checks
     sendCookie(token, response);
     
     return response;

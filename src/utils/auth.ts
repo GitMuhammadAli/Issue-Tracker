@@ -12,12 +12,13 @@ export const comparePassword = async (password: string, hashedPassword: string) 
 };
 
 export const generateToken = (userId: number) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET!, { expiresIn: '1h' });
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET!, { expiresIn: '24h' });
 };
 
 export const verifyToken = (token: string) => {
   return jwt.verify(token, process.env.JWT_SECRET!);
 };
+
 
 
 export const sendSession = (token: string) => {
@@ -34,14 +35,11 @@ export const sendSession = (token: string) => {
 
 
 export const sendCookie = (token: string, res: NextResponse) => {
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production', 
-      sameSite: 'lax' as 'lax', 
-      maxAge: 3600,
-      path: '/',
-    };
-  
-    // Set the cookie
-    res.cookies.set('token', token, cookieOptions);
-  };
+  res.cookies.set("token", token, {
+    httpOnly: false,
+    secure: process.env.NODE_ENV === "production", 
+    sameSite: "strict", 
+    path: "/",
+    maxAge: 7 * 24 * 60 * 60, 
+  });
+};
